@@ -13,7 +13,7 @@ from protos import aoe_interpolator_pb2
 from protos import aoe_interpolator_pb2_grpc
 
 
-class AnimationFrames(data.Dataset):
+class AnimationFrameCollection(data.Dataset):
 
     def __init__(self, frame1, frame2, transform=None):
         self.frame1 = frame1
@@ -37,6 +37,7 @@ class AnimationFrames(data.Dataset):
     def __len__(self):
         return 1
 
+
 # gRPC listener class
 class AoeInterpolatorServicer(aoe_interpolator_pb2_grpc.AoeInterpolatorServicer):
 
@@ -47,12 +48,16 @@ class AoeInterpolatorServicer(aoe_interpolator_pb2_grpc.AoeInterpolatorServicer)
         self.TP = None
         self.flowComp = None
         self.ArbTimeFlowIntrp = None
+        self.numThreads = 1
+
+        print("INIT CALLED!!!!!!!!!!!!!!!!!!!!!!!")
 
 
     def StartPyTorch(self, request, context):
         torch.cuda.empty_cache()
         self.device = torch.device("cuda" if (torch.cuda.is_available() and request.allowCuda) else "cpu")
-        torch.set_num_threads(request.numThreads)
+        self.numThreads = request.numThreads
+        torch.set_num_threads(self.numThreads)
 
         mean = [0.429, 0.431, 0.397]
         std = [1, 1, 1]
@@ -169,12 +174,15 @@ class AoeInterpolatorServicer(aoe_interpolator_pb2_grpc.AoeInterpolatorServicer)
         img2.paste(Image.frombytes('RGB', (frame2Width, frame2Height), request.frame2[16:]),
                    (frame2OffsetX, frame2OffsetY, frame2OffsetX + frame2Width, frame2OffsetY + frame2Height))
 
+        # reapply the number of threads
+        torch.set_num_threads(self.numThreads)
+
         # resize the ML model to accept our image size if necessary
         if self.flowBackWarp.W != frameWidth or self.flowBackWarp.H != frameHeight:
             self.UpdateFlowBackWarp(frameWidth, frameHeight)
 
         # load data
-        animFrames = AnimationFrames(frame1=img1, frame2=img2, transform=self.transform)
+        animFrames = AnimationFrameCollection(frame1=img1, frame2=img2, transform=self.transform)
         animFramesloader = torch.utils.data.DataLoader(animFrames)
         interpolatedImg = None
 
@@ -246,7 +254,7 @@ class AoeInterpolatorServicer(aoe_interpolator_pb2_grpc.AoeInterpolatorServicer)
 
 if __name__ == '__main__':
     # start gRPC server
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
     aoe_interpolator_pb2_grpc.add_AoeInterpolatorServicer_to_server(AoeInterpolatorServicer(), server)
     server.add_insecure_port('[::]:52381')
     server.start()

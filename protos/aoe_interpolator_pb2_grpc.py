@@ -14,20 +14,25 @@ class AoeInterpolatorStub(object):
     Args:
       channel: A grpc.Channel.
     """
-    self.StartPyTorch = channel.unary_unary(
-        '/aoeinterpolator.AoeInterpolator/StartPyTorch',
-        request_serializer=aoe__interpolator__pb2.StartPyTorchRequest.SerializeToString,
-        response_deserializer=aoe__interpolator__pb2.StartPyTorchResponse.FromString,
+    self.StartInterpolator = channel.unary_unary(
+        '/aoeinterpolator.AoeInterpolator/StartInterpolator',
+        request_serializer=aoe__interpolator__pb2.StartInterpolatorRequest.SerializeToString,
+        response_deserializer=aoe__interpolator__pb2.StartInterpolatorResponse.FromString,
         )
     self.GetInterpolatedFrame = channel.unary_unary(
         '/aoeinterpolator.AoeInterpolator/GetInterpolatedFrame',
         request_serializer=aoe__interpolator__pb2.InterpolatedFrameRequest.SerializeToString,
         response_deserializer=aoe__interpolator__pb2.InterpolatedFrameResponse.FromString,
         )
-    self.StopPyTorch = channel.unary_unary(
-        '/aoeinterpolator.AoeInterpolator/StopPyTorch',
-        request_serializer=aoe__interpolator__pb2.StopPyTorchRequest.SerializeToString,
-        response_deserializer=aoe__interpolator__pb2.StopPyTorchResponse.FromString,
+    self.StopInterpolator = channel.unary_unary(
+        '/aoeinterpolator.AoeInterpolator/StopInterpolator',
+        request_serializer=aoe__interpolator__pb2.StopInterpolatorRequest.SerializeToString,
+        response_deserializer=aoe__interpolator__pb2.StopInterpolatorResponse.FromString,
+        )
+    self.TerminateScript = channel.unary_unary(
+        '/aoeinterpolator.AoeInterpolator/TerminateScript',
+        request_serializer=aoe__interpolator__pb2.TerminateScriptRequest.SerializeToString,
+        response_deserializer=aoe__interpolator__pb2.TerminateScriptResponse.FromString,
         )
 
 
@@ -35,7 +40,7 @@ class AoeInterpolatorServicer(object):
   # missing associated documentation comment in .proto file
   pass
 
-  def StartPyTorch(self, request, context):
+  def StartInterpolator(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -49,7 +54,14 @@ class AoeInterpolatorServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def StopPyTorch(self, request, context):
+  def StopInterpolator(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def TerminateScript(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -59,20 +71,25 @@ class AoeInterpolatorServicer(object):
 
 def add_AoeInterpolatorServicer_to_server(servicer, server):
   rpc_method_handlers = {
-      'StartPyTorch': grpc.unary_unary_rpc_method_handler(
-          servicer.StartPyTorch,
-          request_deserializer=aoe__interpolator__pb2.StartPyTorchRequest.FromString,
-          response_serializer=aoe__interpolator__pb2.StartPyTorchResponse.SerializeToString,
+      'StartInterpolator': grpc.unary_unary_rpc_method_handler(
+          servicer.StartInterpolator,
+          request_deserializer=aoe__interpolator__pb2.StartInterpolatorRequest.FromString,
+          response_serializer=aoe__interpolator__pb2.StartInterpolatorResponse.SerializeToString,
       ),
       'GetInterpolatedFrame': grpc.unary_unary_rpc_method_handler(
           servicer.GetInterpolatedFrame,
           request_deserializer=aoe__interpolator__pb2.InterpolatedFrameRequest.FromString,
           response_serializer=aoe__interpolator__pb2.InterpolatedFrameResponse.SerializeToString,
       ),
-      'StopPyTorch': grpc.unary_unary_rpc_method_handler(
-          servicer.StopPyTorch,
-          request_deserializer=aoe__interpolator__pb2.StopPyTorchRequest.FromString,
-          response_serializer=aoe__interpolator__pb2.StopPyTorchResponse.SerializeToString,
+      'StopInterpolator': grpc.unary_unary_rpc_method_handler(
+          servicer.StopInterpolator,
+          request_deserializer=aoe__interpolator__pb2.StopInterpolatorRequest.FromString,
+          response_serializer=aoe__interpolator__pb2.StopInterpolatorResponse.SerializeToString,
+      ),
+      'TerminateScript': grpc.unary_unary_rpc_method_handler(
+          servicer.TerminateScript,
+          request_deserializer=aoe__interpolator__pb2.TerminateScriptRequest.FromString,
+          response_serializer=aoe__interpolator__pb2.TerminateScriptResponse.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

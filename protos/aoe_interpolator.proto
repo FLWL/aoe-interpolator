@@ -4,18 +4,19 @@ package aoeinterpolator;
 
 service AoeInterpolator
 {
-    rpc StartPyTorch(StartPyTorchRequest) returns (StartPyTorchResponse) { }
+    rpc StartInterpolator(StartInterpolatorRequest) returns (StartInterpolatorResponse) { }
     rpc GetInterpolatedFrame(InterpolatedFrameRequest) returns (InterpolatedFrameResponse) { }
-    rpc StopPyTorch(StopPyTorchRequest) returns (StopPyTorchResponse) { }
+    rpc StopInterpolator(StopInterpolatorRequest) returns (StopInterpolatorResponse) { }
+    rpc TerminateScript(TerminateScriptRequest) returns (TerminateScriptResponse) { }
 }
 
-message StartPyTorchRequest
+message StartInterpolatorRequest
 {
     bool allowCuda = 1;
     int32 numThreads = 2;
 }
 
-message StartPyTorchResponse
+message StartInterpolatorResponse
 {
     bool success = 1;
     string message = 2;
@@ -25,7 +26,10 @@ message InterpolatedFrameRequest
 {
     bytes frame1 = 1;
     bytes frame2 = 2;
-    float alpha = 3;
+    int32 transparentR = 3;
+    int32 transparentG = 4;
+    int32 transparentB = 5;
+    float alpha = 6;
 }
 
 message InterpolatedFrameResponse
@@ -33,12 +37,23 @@ message InterpolatedFrameResponse
     bytes frame = 1;
 }
 
-message StopPyTorchRequest
+message StopInterpolatorRequest
 {
 
 }
 
-message StopPyTorchResponse
+message StopInterpolatorResponse
+{
+    bool success = 1;
+    string message = 2;
+}
+
+message TerminateScriptRequest
+{
+
+}
+
+message TerminateScriptResponse
 {
     bool success = 1;
     string message = 2;
