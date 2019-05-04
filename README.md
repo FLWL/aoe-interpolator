@@ -6,14 +6,14 @@ The RPC server is not guaranteed to complete the frame interpolation in a specif
 
 # Communicating with the interpolator
 
-To request an interpolated frame from the RPC server, first the `server.py` must be started and a gRPC call made, which looks like:
+To request an interpolated frame from the RPC server, first the `server.py` must be started and a gRPC call made to port 52381, which looks like:
 
 `rpc GetInterpolatedFrame(InterpolatedFrameRequest) returns (InterpolatedFrameResponse) { }`
 
 and accepts a `InterpolatedFrameRequest` paremeter as follows:
 ```message InterpolatedFrameRequest
 {
-    bytes frame1 ;
+    bytes frame1;
     bytes frame2;
     int32 transparentR;
     int32 transparentG;
@@ -25,6 +25,16 @@ and accepts a `InterpolatedFrameRequest` paremeter as follows:
 where `frame1` and `frame2` are are the two frames that the interpolation will be done between, and `transparentR`, `transparentG`, `transparentB` are integers representing the RGB value that acts as a transparent area in the frames. The knowledge of transparency is used for padding incoming frames and cropping outgoing ones.
 
 The `alpha` parameter decides where the interpolated frame should reside between `frame1` and `frame2`. For example, `alpha` of 0.5 would mean that the resulting frame would have to be exactly between the `frame1` and `frame2`. It can be thought of as linear interpolation (lerp). Likewise, `alpha` of 0.3 means that the resulting frame would only have moved 30% towards `frame2` from `frame1`.
+
+Once a frame has been interpolated, the gRPC responds with the following structure:
+
+```message InterpolatedFrameResponse
+{
+    bytes frame;
+}
+```
+
+where `frame` is the interpolated frame in the same format as the inputted frames.
 
 # Controlling the interpolator
 
@@ -57,7 +67,35 @@ To gracefully shut down the RPC server, a
 
 call can be made, which also automatically calls the `StopInterpolator` function before shutting down.
 
+# Input and output formats
 
+The `frame*` parameters seen up above (also .rgb files in the tests directory) are of following C-like structure, with `int` values using little-endian encoding:
 
+```
+struct Frame
+{
+    int width;
+    int height;
+    int centerX;
+    int centerY;
+    char data[width*height];
+}
+```
 
+# Compiling the ProtoBuf file
 
+The .proto file can be found in the ./protos/ directory. To compile it for the Python language,
+
+`python -m grpc_tools.protoc -I../protos --python_out=. --grpc_python_out=. ../protos/aoe_interpolator.proto`
+
+command can be used in that folder. After the compilation has been done, open `aoe_interpolator_pb2_grpc.py` and change the line
+
+`import aoe_interpolator_pb2 as aoe__interpolator__pb2`
+
+to
+
+`from protos import aoe_interpolator_pb2 as aoe__interpolator__pb2`
+
+to account for the fact that the proto files are in a submodule/directory in the project.
+
+The ProtoBuf file can also be compiled for other languages, making it easy to interface with aoe-interpolator.
