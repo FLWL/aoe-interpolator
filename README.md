@@ -110,3 +110,14 @@ In the `./tests/` folder the `test_client.py` file can be found, which requests 
 
 In the `./tests/tools` folder there are files `ca2rgb.py`, `png2rgb.py` and `rgb2png.py`, that are used to convert between different image formats for testing purposes.
 
+# Dependancies
+
+The module depends on Python and its following dependancies:
+* grpcio
+* protobuf
+* torch
+* torchvision
+
+# Performance
+
+The performance of this script is limited by the performance of the Super-SloMo interpolator it uses. On a i7-2600k processor, it takes about 2-3 seconds to interpolate a single frame consisting of 160x288 pixels. With CUDA GPU acceleration, the GTX 1080 Ti can output such a frame every 0.03 seconds.
