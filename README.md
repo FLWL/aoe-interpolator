@@ -48,7 +48,7 @@ There is also a
 
 `rpc StopInterpolator(StopInterpolatorRequest) returns (StopInterpolatorResponse) { }`
 
-call available, which frees the GPU memory and tries to make most of the PyTorch Python objects free for GC, meaning a call to start the interpolator again would have to be made after using this command, if the client wishes to interpolate any more frames. Note that not 100% RAM or VRAM can be freed, some will remain cached to PyTorch until script termination.
+call available, which frees the GPU memory and tries to make most of the PyTorch Python objects available for GC, meaning a call to start the interpolator again would have to be made after using this command, if the client wishes to interpolate any more frames. Note that not all of the RAM or VRAM used by PyTorch can be freed, as some will remain cached until script termination.
 
 
 To gracefully shut down the RPC server, a
