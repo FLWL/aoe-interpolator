@@ -2,6 +2,8 @@
 
 This is a project to provide a 3rd party rendering client for Age of Empires 2 known as CaptureAge with the oppurtunity to display the game's archaic 6-30 FPS animations at the refresh rates of 60+ hertz comparable to modern games. It works by hosting a RPC server that accepts two frames in a specific RGB format and replies with a single interpolated frame at any time between these two frames, chosen by the client. That in between frame is calculated using motion interpolation, more specifically the Super-SloMo implementation that can be found here: https://github.com/avinashpaliwal/Super-SloMo
 
+The client does not need to worry about the size of the frames, or aligning the center points, or cropping the output frames, as that is done automatically be the interpolator.
+
 The RPC server is not guaranteed to complete the frame interpolation in a specific time. It might take anywhere from tens of milliseconds (using GPU acceleration) to multiple seconds (when relying on the CPU). The client is expected to implement their own caching system.
 
 # Communicating with the interpolator
@@ -78,9 +80,11 @@ struct Frame
     int height;
     int centerX;
     int centerY;
-    char data[width*height];
+    char data[width*height*3];
 }
 ```
+
+Every entry of the `data` field is a R, G, B value represented by 3 bytes respectively (hence the x3 of the array size).
 
 # Compiling the ProtoBuf file
 
@@ -99,3 +103,10 @@ to
 to account for the fact that the proto files are in a submodule/directory in the project.
 
 The ProtoBuf file can also be compiled for other languages, making it easy to interface with aoe-interpolator.
+
+# Included tests
+
+In the `./tests/` folder the `test_client.py` file can be found, which requests a specific amount of interpolated frames stored in `data` and its subdirectories, to test the interpolator.
+
+In the `./tests/tools` folder there are files `ca2rgb.py`, `png2rgb.py` and `rgb2png.py`, that are used to convert between different image formats for testing purposes.
+
