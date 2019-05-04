@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package aoeinterpolator;
+
+service AoeInterpolator
+{
+    rpc StartPyTorch(StartPyTorchRequest) returns (StartPyTorchResponse) { }
+    rpc GetInterpolatedFrame(InterpolatedFrameRequest) returns (InterpolatedFrameResponse) { }
+    rpc StopPyTorch(StopPyTorchRequest) returns (StopPyTorchResponse) { }
+}
+
+message StartPyTorchRequest
+{
+    bool allowCuda = 1;
+    int32 numThreads = 2;
+}
+
+message StartPyTorchResponse
+{
+    bool success = 1;
+    string message = 2;
+}
+
+message InterpolatedFrameRequest
+{
+    bytes frame1 = 1;
+    bytes frame2 = 2;
+    float alpha = 3;
+}
+
+message InterpolatedFrameResponse
+{
+    bytes frame = 1;
+}
+
+message StopPyTorchRequest
+{
+
+}
+
+message StopPyTorchResponse
+{
+    bool success = 1;
+    string message = 2;
+}
