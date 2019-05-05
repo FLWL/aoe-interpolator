@@ -22,6 +22,8 @@ class AoeInterpolatorServicer(aoe_interpolator_pb2_grpc.AoeInterpolatorServicer)
 
 
     def GetInterpolatedFrame(self, request, context):
+        processing_start_time = time.time()
+
         # frames' metadata
         frame1Width = int.from_bytes(request.frame1[0:4], 'little')
         frame1Height = int.from_bytes(request.frame1[4:8], 'little')
@@ -104,17 +106,22 @@ class AoeInterpolatorServicer(aoe_interpolator_pb2_grpc.AoeInterpolatorServicer)
         frameCenterX -= croparea[0]
         frameCenterY -= croparea[1]
         interpolatedImg = interpolatedImg.crop(croparea)
-
-        croppedWidth = interpolatedImg.width
-        croppedHeight = interpolatedImg.height
+        frameWidth = interpolatedImg.width
+        frameHeight = interpolatedImg.height
 
         # pack the result into bytes and send back
         interpolatedBytes = bytearray()
-        interpolatedBytes.extend(croppedWidth.to_bytes(4, 'little'))
-        interpolatedBytes.extend(croppedHeight.to_bytes(4, 'little'))
+        interpolatedBytes.extend(frameWidth.to_bytes(4, 'little'))
+        interpolatedBytes.extend(frameHeight.to_bytes(4, 'little'))
         interpolatedBytes.extend(frameCenterX.to_bytes(4, 'little'))
         interpolatedBytes.extend(frameCenterY.to_bytes(4, 'little'))
         interpolatedBytes.extend(interpolatedImg.tobytes())
+
+        print("Interpolated frames of size (" + str(frame1Width) + ", " + str(frame1Height)
+              + ") and (" + str(frame2Width) + ", " + str(frame2Height) + ") with alpha "
+              + "{0:.2f}".format(request.alpha) + " to: ("
+              + str(frameWidth) + ", " + str(frameHeight) + ") in "
+              + "{0:.2f}".format(time.time() - processing_start_time) + " seconds.")
 
         return aoe_interpolator_pb2.InterpolatedFrameResponse(frame=bytes(interpolatedBytes))
 
