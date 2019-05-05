@@ -110,9 +110,9 @@ In the `./tests/` folder the `test_client.py` file can be found, which requests 
 
 In the `./tests/tools` folder there are files `ca2rgb.py`, `png2rgb.py` and `rgb2png.py`, that are used to convert between different image formats for testing purposes.
 
-# Dependancies
+# Dependaecies
 
-The module depends on Python and its following dependancies:
+The module depends on Python and its following dependencies:
 * grpcio
 * protobuf
 * torch
