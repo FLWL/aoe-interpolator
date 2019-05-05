@@ -8,7 +8,7 @@ The RPC server is not guaranteed to complete the frame interpolation in a specif
 
 # Communicating with the interpolator
 
-To request an interpolated frame from the RPC server, first the `server.py` must be started and a gRPC call made to port 52381, which looks like:
+To request an interpolated frame from the RPC server, first the `server.py` must be started, the interpolator initialized with a gRPC call, and finally a call made to port 52381, which looks like:
 
 `rpc GetInterpolatedFrame(InterpolatedFrameRequest) returns (InterpolatedFrameResponse) { }`
 
@@ -24,7 +24,7 @@ and accepts a `InterpolatedFrameRequest` paremeter as follows:
 }
 ```
 
-where `frame1` and `frame2` are are the two frames that the interpolation will be done between, and `transparentR`, `transparentG`, `transparentB` are integers representing the RGB value that acts as a transparent area in the frames. The knowledge of transparency is used for padding incoming frames and cropping outgoing ones.
+where `frame1` and `frame2` are are the two frames that the interpolation will be done between, and `transparentR`, `transparentG`, `transparentB` are integers representing the RGB value that acts as a transparent area in the frames. The knowledge of transparency is used for padding incoming frames and cropping outgoing ones. Note that starting the Python script or initializing the interpolator via gRPC is required only once.
 
 The `alpha` parameter decides where the interpolated frame should reside between `frame1` and `frame2`. For example, `alpha` of 0.5 would mean that the resulting frame would have to be exactly between the `frame1` and `frame2`. It can be thought of as linear interpolation (lerp). Likewise, `alpha` of 0.3 means that the resulting frame would only have moved 30% towards `frame2` from `frame1`.
 
@@ -106,7 +106,7 @@ The ProtoBuf file can also be compiled for other languages, making it easy to in
 
 # Included tests
 
-In the `./tests/` folder the `test_client.py` file can be found, which requests a specific amount of interpolated frames stored in `data` and its subdirectories, to test the interpolator.
+In the `./tests/` folder the `test_client.py` file can be found, which requests a specific amount of frames to be interpolated from `./tests/data` and its subdirectories, to test the interpolator.
 
 In the `./tests/tools` folder there are files `ca2rgb.py`, `png2rgb.py` and `rgb2png.py`, that are used to convert between different image formats for testing purposes.
 
