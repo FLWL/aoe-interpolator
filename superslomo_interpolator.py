@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import sys
+import os
 import torch
 import torch.nn.functional as F
 import torch.utils.data as data
@@ -74,7 +76,7 @@ class SuperSloMoInterpolator:
 
         self.UpdateFlowBackWarp(128, 128)
 
-        checkpoint = "data/SuperSloMo.ckpt"
+        checkpoint = self.resource_path("data/SuperSloMo.ckpt")
         dict1 = torch.load(checkpoint, map_location='cpu')
         self.ArbTimeFlowIntrp.load_state_dict(dict1['state_dictAT'])
         self.flowComp.load_state_dict(dict1['state_dictFC'])
@@ -144,6 +146,17 @@ class SuperSloMoInterpolator:
         self.TP = None
         self.flowComp = None
         self.ArbTimeFlowIntrp = None
+
+
+    def resource_path(self, relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
 
 
 class AnimationFrameCollection(data.Dataset):
