@@ -32,7 +32,7 @@ def run():
         # init interpolator
         init_start = time.time()
         stub.StartInterpolator(aoe_interpolator_pb2.StartInterpolatorRequest(allowCuda=True, numThreads=1))
-        print("AoeInterpolator initialization took: " + str(time.time() - init_start))
+        print("AoeInterpolator initialization took: " + "{0:.2f}".format(time.time() - init_start) + " seconds.")
 
         frametimes = []
         frametimes.append(0.0)
@@ -58,7 +58,7 @@ def run():
             interpolationRequest.transparentB = 255
             interpolationRequest.alpha = float(frametime)
             interpolatedFrameResponse = stub.GetInterpolatedFrame(interpolationRequest)
-            print("Frame " + str(frame_num) + " (" + frametime_formatted + ") interpolation took: " + str(time.time() - interp_start))
+            print("Frame " + str(frame_num) + " (" + frametime_formatted + ") interpolation took: " + "{0:.2f}".format(time.time() - interp_start) + " seconds.")
 
             # save the output frame
             framePath = "data/output_bytes/frame" + str(frame_num) + "_(" + frametime_formatted +").rgb"
