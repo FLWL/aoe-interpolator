@@ -110,14 +110,29 @@ In the `./tests/` folder the `test_client.py` file can be found, which requests 
 
 In the `./tests/tools` folder there are files `ca2rgb.py`, `png2rgb.py` and `rgb2png.py`, that are used to convert between different image formats for testing purposes.
 
-# Dependancies
+# Dependencies
 
-The module depends on Python and its following dependancies:
+The module depends on 64-bit Python 3.6 or 3.7 and its following dependencies:
 * grpcio
 * protobuf
-* torch
+* torch or torch-cpu
 * torchvision
 
 # Performance
 
 The performance of this script is limited by the performance of the Super-SloMo interpolator it uses. On a i7-2600k processor, it takes about 2-3 seconds to interpolate a single frame consisting of 160x288 pixels. With CUDA GPU acceleration, the GTX 1080 Ti can output such a frame every 0.03 seconds.
+
+# Packaging the project
+
+PyInstaller can package the project into either a single .exe file or a series of files in a folder that is runnable on a fresh Windows 10 installation without having to install any additional software.
+
+Due to some compatibility issues, the native Python install was used here instead of a virtual environment.
+
+Anyways, first install the dependencies listed above, plus pyinstaller, and if necessary, upgrade the numpy package with `pip3 install numpy --upgrade`. Then package the project by running any of the following commands in the project's directory:
+
+`pyinstaller --onefile --add-data "data/SuperSloMo.ckpt;data" server.py` to package everything into a single .exe file.
+`pyinstaller --add-data "data/SuperSloMo.ckpt;data" server.py` to package into a directory.
+
+If all goes well, the resulting packaged project will appear in the `./dist/` folder.
+
+Creating a single .exe file takes up more space than a compressed packaged directory and also takes longer to execute. Basically the single .exe file just unpacks the files into a temporary directory and runs them.
