@@ -106,7 +106,7 @@ The ProtoBuf file can also be compiled for other languages, making it easy to in
 
 # Included tests
 
-In the `./tests/` folder the `test_client.py` file can be found, which requests a specific amount of interpolated frames stored in `data` and its subdirectories, to test the interpolator.
+In the `./tests/` folder the `test_client.py` file can be found, which requests a specific amount of frames to be interpolated from `./tests/data` and its subdirectories, to test the interpolator.
 
 In the `./tests/tools` folder there are files `ca2rgb.py`, `png2rgb.py` and `rgb2png.py`, that are used to convert between different image formats for testing purposes.
 
